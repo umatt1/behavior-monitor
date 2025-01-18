@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react'
 import CalendarHeatmap from 'react-calendar-heatmap'
 import 'react-calendar-heatmap/dist/styles.css'
-import { startOfYear, endOfYear, format, subYears } from 'date-fns'
+import { startOfMonth, endOfMonth, format, subMonths } from 'date-fns'
 import { Incident } from '@/app/types'
 
 interface IncidentHeatmapProps {
@@ -16,13 +16,19 @@ interface HeatmapValue {
   severity: number
 }
 
+type ReactCalendarValue = {
+  date: Date
+  count: number
+  severity: number
+} | null | undefined
+
 export function IncidentHeatmap({ incidents }: IncidentHeatmapProps) {
   const [hoveredValue, setHoveredValue] = useState<HeatmapValue | null>(null)
 
   const { startDate, endDate, values } = useMemo(() => {
     const now = new Date()
-    const start = startOfYear(subYears(now, 1))
-    const end = endOfYear(now)
+    const start = startOfMonth(subMonths(now, 5)) // Show last 6 months
+    const end = endOfMonth(now)
 
     // Create a map of dates to incident counts and average severity
     const dateMap = new Map<string, { count: number; totalSeverity: number }>()
@@ -50,22 +56,22 @@ export function IncidentHeatmap({ incidents }: IncidentHeatmapProps) {
     }
   }, [incidents])
 
-  const getTooltipDataText = (value: HeatmapValue) => {
+  const getTooltipDataText = (value: ReactCalendarValue) => {
     if (!value || !value.count) return 'No incidents'
     return `${value.count} incident${value.count !== 1 ? 's' : ''} (avg severity: ${value.severity.toFixed(1)})`
   }
 
-  const getTitleForValue = (value: HeatmapValue) => {
+  const getTitleForValue = (value: ReactCalendarValue) => {
     if (!value || !value.count) return ''
     return `${format(value.date, 'MMM d, yyyy')}: ${getTooltipDataText(value)}`
   }
 
-  const getClassForValue = (value: HeatmapValue) => {
+  const getClassForValue = (value: ReactCalendarValue) => {
     if (!value || !value.count) return 'color-empty'
     
     // Calculate color based on both count and severity
-    const intensity = Math.min(value.count * value.severity / 5, 4)
-    return `color-scale-${Math.ceil(intensity)}`
+    const intensity = Math.min(Math.ceil(value.count * value.severity / 3), 4)
+    return `color-scale-${intensity}`
   }
 
   return (
@@ -76,15 +82,15 @@ export function IncidentHeatmap({ incidents }: IncidentHeatmapProps) {
 
       <style jsx global>{`
         .react-calendar-heatmap {
-          font-size: 8px;
+          min-width: 800px;
         }
         .react-calendar-heatmap text {
-          font-size: 6px;
-          fill: #aaa;
+          font-size: 7px;
+          fill: #666;
         }
         .react-calendar-heatmap rect {
-          height: 9px;
-          width: 9px;
+          height: 12px;
+          width: 12px;
           rx: 2;
         }
         .react-calendar-heatmap .color-empty {
@@ -104,27 +110,30 @@ export function IncidentHeatmap({ incidents }: IncidentHeatmapProps) {
         }
       `}</style>
 
-      <div className="relative">
-        <CalendarHeatmap
-          startDate={startDate}
-          endDate={endDate}
-          values={values}
-          classForValue={getClassForValue}
-          titleForValue={getTitleForValue}
-          tooltipDataAttrs={(value: HeatmapValue) => ({
-            'data-tooltip': getTooltipDataText(value)
-          })}
-          showWeekdayLabels
-          gutterSize={2}
-          onMouseOver={(event, value) => setHoveredValue(value)}
-          onMouseLeave={() => setHoveredValue(null)}
-        />
-        
-        {hoveredValue && (
-          <div className="absolute bottom-0 left-0 bg-gray-800 text-white px-2 py-1 rounded text-sm">
-            {getTitleForValue(hoveredValue)}
-          </div>
-        )}
+      <div className="overflow-x-auto">
+        <div className="min-h-[140px]">
+          <CalendarHeatmap
+            startDate={startDate}
+            endDate={endDate}
+            values={values}
+            classForValue={getClassForValue}
+            titleForValue={getTitleForValue}
+            tooltipDataAttrs={(value) => ({
+              'data-tooltip': getTooltipDataText(value as ReactCalendarValue)
+            })}
+            showWeekdayLabels
+            gutterSize={3}
+            horizontal={true}
+            onMouseOver={(event, value) => setHoveredValue(value as HeatmapValue)}
+            onMouseLeave={() => setHoveredValue(null)}
+          />
+          
+          {hoveredValue && (
+            <div className="absolute bottom-0 left-0 bg-gray-800 text-white px-2 py-1 rounded text-sm">
+              {getTitleForValue(hoveredValue)}
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="flex justify-center items-center mt-4 text-sm text-gray-500">
