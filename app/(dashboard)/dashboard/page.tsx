@@ -1,7 +1,6 @@
 import { createClient } from '@/app/utils/supabase/server'
 import { formatDate } from '@/app/utils/dates'
 import { DashboardHeader } from '@/app/components/dashboard/DashboardHeader'
-import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
 export default async function DashboardPage() {

@@ -2,12 +2,15 @@
 
 import { AuthProvider } from '../auth/AuthProvider'
 
-export function Providers({
-  children,
-  initialSession,
-}: {
+interface ProvidersProps {
   children: React.ReactNode
   initialSession: any
-}) {
-  return <AuthProvider initialSession={initialSession}>{children}</AuthProvider>
+}
+
+export function Providers({ children, initialSession }: ProvidersProps) {
+  return (
+    <AuthProvider initialSession={initialSession}>
+      {children}
+    </AuthProvider>
+  )
 }

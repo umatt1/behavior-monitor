@@ -21,15 +21,10 @@ export default function LoginPage() {
 
     try {
       const supabase = createClient()
-      const { error } = await supabase.auth.signInWithPassword({
+      await supabase.auth.signInWithPassword({
         email,
         password,
       })
-
-      if (error) {
-        setError(error.message)
-        return
-      }
 
       // Get the redirect URL from the query parameters or default to dashboard
       const redirectTo = searchParams.get('redirectedFrom') || '/dashboard'
