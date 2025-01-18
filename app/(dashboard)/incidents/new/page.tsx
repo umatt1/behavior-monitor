@@ -32,7 +32,7 @@ export default function NewIncidentPage() {
       }
       date = dateObj.toISOString()
     } catch (err) {
-      setError('Please enter a valid date and time')
+      setError('Please enter a valid date and time' + err)
       setLoading(false)
       return
     }
