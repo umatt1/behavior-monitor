@@ -10,12 +10,14 @@ interface IncidentHeatmapProps {
   incidents: Incident[]
 }
 
+interface CalendarValue {
+  count: number
+  severity: number
+}
+
 type ReactCalendarHeatmapValue = {
   date: Date
-  value: {
-    count: number
-    severity: number
-  }
+  value?: CalendarValue
 }
 
 export function IncidentHeatmap({ incidents }: IncidentHeatmapProps) {
@@ -54,17 +56,17 @@ export function IncidentHeatmap({ incidents }: IncidentHeatmapProps) {
     }
   }, [incidents])
 
-  const getTooltipDataText = (value: ReactCalendarHeatmapValue | null) => {
+  const getTooltipDataText = (value: ReactCalendarHeatmapValue | undefined) => {
     if (!value?.value) return 'No incidents'
     return `${value.value.count} incident${value.value.count !== 1 ? 's' : ''} (avg severity: ${value.value.severity.toFixed(1)})`
   }
 
-  const getTitleForValue = (value: ReactCalendarHeatmapValue | null) => {
+  const getTitleForValue = (value: ReactCalendarHeatmapValue | undefined) => {
     if (!value?.value) return ''
     return `${format(value.date, 'MMM d, yyyy')}: ${getTooltipDataText(value)}`
   }
 
-  const getClassForValue = (value: ReactCalendarHeatmapValue | null) => {
+  const getClassForValue = (value: ReactCalendarHeatmapValue | undefined) => {
     if (!value?.value) return 'color-empty'
     
     // Calculate color based on both count and severity
@@ -109,20 +111,17 @@ export function IncidentHeatmap({ incidents }: IncidentHeatmapProps) {
       `}</style>
 
       <div className="overflow-x-auto">
-        <div className="min-h-[140px]">
+        <div className="min-h-[140px] relative">
           <CalendarHeatmap
             startDate={startDate}
             endDate={endDate}
             values={values}
             classForValue={getClassForValue}
             titleForValue={getTitleForValue}
-            tooltipDataAttrs={(value) => ({
-              'data-tooltip': getTooltipDataText(value)
-            })}
             showWeekdayLabels
             gutterSize={3}
             horizontal={true}
-            onMouseOver={(event, value) => setHoveredValue(value)}
+            onMouseOver={(event, value) => setHoveredValue(value as ReactCalendarHeatmapValue)}
             onMouseLeave={() => setHoveredValue(null)}
           />
           
