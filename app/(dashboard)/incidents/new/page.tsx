@@ -80,13 +80,13 @@ export default function NewIncidentPage() {
           
           <form className="space-y-6" onSubmit={handleSubmit}>
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-                {error}
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative" role="alert">
+                <span className="block sm:inline">{error}</span>
               </div>
             )}
             
             <div>
-              <label htmlFor="date" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="date" className="block text-sm font-medium text-gray-900">
                 Date and Time
               </label>
               <input
@@ -95,18 +95,18 @@ export default function NewIncidentPage() {
                 id="date"
                 required
                 defaultValue={new Date().toISOString().slice(0, 16)}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                className="mt-1 block w-full rounded-md border-gray-300 text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               />
             </div>
 
             <div>
-              <label htmlFor="category" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="category" className="block text-sm font-medium text-gray-900">
                 Category
               </label>
               <select
                 id="category"
                 name="category"
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                className="mt-1 block w-full rounded-md border-gray-300 text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               >
                 <option>Verbal</option>
                 <option>Physical</option>
@@ -117,63 +117,66 @@ export default function NewIncidentPage() {
             </div>
 
             <div>
-              <label htmlFor="severity" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="severity" className="block text-sm font-medium text-gray-900">
                 Severity Level
               </label>
               <input
                 type="range"
                 min="1"
                 max="5"
-                className="mt-1 block w-full"
+                defaultValue="1"
+                className="mt-1 block w-full accent-indigo-600"
                 id="severity"
                 name="severity"
               />
-              <div className="flex justify-between text-xs text-gray-500">
-                <span>Minor</span>
-                <span>Severe</span>
+              <div className="flex justify-between text-xs text-gray-600 mt-1">
+                <span>Minor (1)</span>
+                <span>Moderate (3)</span>
+                <span>Severe (5)</span>
               </div>
             </div>
 
             <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="description" className="block text-sm font-medium text-gray-900">
                 Description
               </label>
               <textarea
                 id="description"
                 name="description"
                 rows={4}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                required
+                className="mt-1 block w-full rounded-md border-gray-300 text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 placeholder="Describe what happened..."
               />
             </div>
 
             <div>
-              <label htmlFor="location" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="location" className="block text-sm font-medium text-gray-900">
                 Location
               </label>
               <input
                 type="text"
                 name="location"
                 id="location"
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                className="mt-1 block w-full rounded-md border-gray-300 text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 placeholder="Where did this occur?"
               />
             </div>
 
             <div>
-              <label htmlFor="witnesses" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="witnesses" className="block text-sm font-medium text-gray-900">
                 Witnesses
               </label>
               <input
                 type="text"
                 name="witnesses"
                 id="witnesses"
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                className="mt-1 block w-full rounded-md border-gray-300 text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 placeholder="Were there any witnesses? (Optional)"
               />
             </div>
 
-            <div className="flex justify-end space-x-4">
+            <div className="flex justify-end space-x-4 pt-4">
               <button
                 type="button"
                 onClick={() => router.push('/dashboard')}
