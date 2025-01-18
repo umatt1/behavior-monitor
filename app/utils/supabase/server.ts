@@ -1,5 +1,6 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { cookies } from 'next/headers'
+import type { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies'
 import { Database } from '../types/supabase'
 
 export async function createClient() {
@@ -15,12 +16,12 @@ export async function createClient() {
         },
         set(name: string, value: string, options: CookieOptions) {
           try {
-            cookieStore.set(name, value, options as any)
+            cookieStore.set(name, value, options as ResponseCookie)
           } catch {}
         },
         remove(name: string, options: CookieOptions) {
           try {
-            cookieStore.set(name, '', { ...options, maxAge: 0 } as any)
+            cookieStore.set(name, '', { ...options, maxAge: 0 } as ResponseCookie)
           } catch {}
         },
       },

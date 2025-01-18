@@ -1,15 +1,14 @@
 'use client'
 
-import { AuthProvider } from '../auth/AuthProvider'
+import { AuthProvider } from '@/app/components/auth/AuthProvider'
 
 interface ProvidersProps {
   children: React.ReactNode
-  initialSession: any
 }
 
-export function Providers({ children, initialSession }: ProvidersProps) {
+export function Providers({ children }: ProvidersProps) {
   return (
-    <AuthProvider initialSession={initialSession}>
+    <AuthProvider>
       {children}
     </AuthProvider>
   )

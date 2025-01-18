@@ -1,18 +1,17 @@
 'use client'
 
-import { createClient } from '@/app/utils/supabase/client'
+import { createClient } from '@/app/utils/supabase/server'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { FormEvent, useState } from 'react'
+import { redirect } from 'next/navigation'
 
-export default function LoginPage() {
+export default async function LoginPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setError(null)
     setLoading(true)
 
     const formData = new FormData(e.currentTarget)
@@ -28,9 +27,9 @@ export default function LoginPage() {
 
       // Get the redirect URL from the query parameters or default to dashboard
       const redirectTo = searchParams.get('redirectedFrom') || '/dashboard'
-      router.push(redirectTo)
+      redirect(redirectTo)
     } catch (error) {
-      setError('An unexpected error occurred')
+      console.error(error)
     } finally {
       setLoading(false)
     }
@@ -45,12 +44,6 @@ export default function LoginPage() {
           </h2>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-              {error}
-            </div>
-          )}
-          
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
               <label htmlFor="email-address" className="sr-only">
