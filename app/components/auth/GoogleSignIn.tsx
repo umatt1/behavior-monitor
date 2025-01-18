@@ -5,9 +5,33 @@ import { createClient } from '@/app/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 import { useEffect, useCallback } from 'react'
 
+interface GoogleCredentialResponse {
+  credential: string;
+}
+
 declare global {
   interface Window {
-    google: any
+    google: {
+      accounts: {
+        id: {
+          initialize: (config: {
+            client_id: string;
+            callback: (response: GoogleCredentialResponse) => void;
+            nonce: string;
+            use_fedcm_for_prompt: boolean;
+          }) => void;
+          renderButton: (element: HTMLElement, options: {
+            theme: string;
+            size: string;
+            type: string;
+            text: string;
+            shape: string;
+          }) => void;
+          prompt: () => void;
+          cancel: () => void;
+        };
+      };
+    };
   }
 }
 
@@ -40,8 +64,8 @@ const GoogleSignIn = () => {
       console.log('Current origin:', window.location.origin)
       console.log('Initializing with client ID:', process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID)
       window.google.accounts.id.initialize({
-        client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-        callback: async (response: any) => {
+        client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string,
+        callback: async (response: GoogleCredentialResponse) => {
           try {
             const { error } = await supabase.auth.signInWithIdToken({
               provider: 'google',
@@ -73,7 +97,7 @@ const GoogleSignIn = () => {
       // Also initialize One Tap
       window.google.accounts.id.prompt()
     }
-  }, [router])
+  }, [router, supabase.auth])
 
   useEffect(() => {
     return () => {
