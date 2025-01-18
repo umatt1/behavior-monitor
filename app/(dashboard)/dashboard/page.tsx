@@ -2,6 +2,7 @@ import { createClient } from '@/app/utils/supabase/server'
 import { DashboardHeader } from '@/app/components/dashboard/DashboardHeader'
 import { redirect } from 'next/navigation'
 import { IncidentList } from '@/app/components/incidents/IncidentList'
+import { IncidentHeatmap } from '@/app/components/dashboard/IncidentHeatmap'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -29,6 +30,10 @@ export default async function DashboardPage() {
           <DashboardHeader />
           
           <div className="mt-4">
+            <IncidentHeatmap incidents={stats.recentIncidents} />
+          </div>
+
+          <div className="mt-8">
             <h2 className="text-lg font-medium text-gray-900 mb-4">Your Incidents</h2>
             <IncidentList incidents={stats.recentIncidents} />
           </div>
