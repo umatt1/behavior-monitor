@@ -10,20 +10,16 @@ interface IncidentHeatmapProps {
   incidents: Incident[]
 }
 
-interface HeatmapValue {
+type ReactCalendarHeatmapValue = {
   date: Date
-  count: number
-  severity: number
+  value: {
+    count: number
+    severity: number
+  }
 }
 
-type ReactCalendarValue = {
-  date: Date
-  count: number
-  severity: number
-} | null | undefined
-
 export function IncidentHeatmap({ incidents }: IncidentHeatmapProps) {
-  const [hoveredValue, setHoveredValue] = useState<HeatmapValue | null>(null)
+  const [hoveredValue, setHoveredValue] = useState<ReactCalendarHeatmapValue | null>(null)
 
   const { startDate, endDate, values } = useMemo(() => {
     const now = new Date()
@@ -43,10 +39,12 @@ export function IncidentHeatmap({ incidents }: IncidentHeatmapProps) {
     })
 
     // Convert the map to the format needed by the heatmap
-    const heatmapValues: HeatmapValue[] = Array.from(dateMap.entries()).map(([date, data]) => ({
+    const heatmapValues: ReactCalendarHeatmapValue[] = Array.from(dateMap.entries()).map(([date, data]) => ({
       date: new Date(date),
-      count: data.count,
-      severity: Math.round(data.totalSeverity / data.count)
+      value: {
+        count: data.count,
+        severity: Math.round(data.totalSeverity / data.count)
+      }
     }))
 
     return {
@@ -56,21 +54,21 @@ export function IncidentHeatmap({ incidents }: IncidentHeatmapProps) {
     }
   }, [incidents])
 
-  const getTooltipDataText = (value: ReactCalendarValue) => {
-    if (!value || !value.count) return 'No incidents'
-    return `${value.count} incident${value.count !== 1 ? 's' : ''} (avg severity: ${value.severity.toFixed(1)})`
+  const getTooltipDataText = (value: ReactCalendarHeatmapValue | null) => {
+    if (!value?.value) return 'No incidents'
+    return `${value.value.count} incident${value.value.count !== 1 ? 's' : ''} (avg severity: ${value.value.severity.toFixed(1)})`
   }
 
-  const getTitleForValue = (value: ReactCalendarValue) => {
-    if (!value || !value.count) return ''
+  const getTitleForValue = (value: ReactCalendarHeatmapValue | null) => {
+    if (!value?.value) return ''
     return `${format(value.date, 'MMM d, yyyy')}: ${getTooltipDataText(value)}`
   }
 
-  const getClassForValue = (value: ReactCalendarValue) => {
-    if (!value || !value.count) return 'color-empty'
+  const getClassForValue = (value: ReactCalendarHeatmapValue | null) => {
+    if (!value?.value) return 'color-empty'
     
     // Calculate color based on both count and severity
-    const intensity = Math.min(Math.ceil(value.count * value.severity / 3), 4)
+    const intensity = Math.min(Math.ceil(value.value.count * value.value.severity / 3), 4)
     return `color-scale-${intensity}`
   }
 
@@ -119,12 +117,12 @@ export function IncidentHeatmap({ incidents }: IncidentHeatmapProps) {
             classForValue={getClassForValue}
             titleForValue={getTitleForValue}
             tooltipDataAttrs={(value) => ({
-              'data-tooltip': getTooltipDataText(value as ReactCalendarValue)
+              'data-tooltip': getTooltipDataText(value)
             })}
             showWeekdayLabels
             gutterSize={3}
             horizontal={true}
-            onMouseOver={(event, value) => setHoveredValue(value as HeatmapValue)}
+            onMouseOver={(event, value) => setHoveredValue(value)}
             onMouseLeave={() => setHoveredValue(null)}
           />
           
