@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { createClient } from './utils/supabase/server'
 import { Providers } from './components/providers/Providers'
 
 const geistSans = Geist({
@@ -19,18 +18,15 @@ export const metadata: Metadata = {
   description: 'A safe space to document and track behavioral patterns',
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const supabase = await createClient()
-  const { data: { session } } = await supabase.auth.getSession()
-
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <Providers initialSession={session}>
+        <Providers>
           {children}
         </Providers>
       </body>

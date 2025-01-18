@@ -4,24 +4,25 @@ import type { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies'
 import { Database } from '../types/supabase'
 
 export async function createClient() {
-  const cookieStore = cookies()
+  const cookieStore = await cookies()
 
   return createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value
+        async get(name: string) {
+          const cookie = await cookieStore.get(name)
+          return cookie?.value
         },
-        set(name: string, value: string, options: CookieOptions) {
+        async set(name: string, value: string, options: CookieOptions) {
           try {
-            cookieStore.set(name, value, options as ResponseCookie)
+            await cookieStore.set(name, value, options as ResponseCookie)
           } catch {}
         },
-        remove(name: string, options: CookieOptions) {
+        async remove(name: string, options: CookieOptions) {
           try {
-            cookieStore.set(name, '', { ...options, maxAge: 0 } as ResponseCookie)
+            await cookieStore.set(name, '', { ...options, maxAge: 0 } as ResponseCookie)
           } catch {}
         },
       },
