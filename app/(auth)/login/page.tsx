@@ -3,6 +3,7 @@
 import { createClient } from '@/app/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { LoginForm } from '@/app/components/auth/LoginForm'
+import GoogleSignIn from '@/app/components/auth/GoogleSignIn'
 
 export default async function LoginPage() {
   const supabase = await createClient()
@@ -20,8 +21,17 @@ export default async function LoginPage() {
         </h2>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
+        <div className="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
+          <GoogleSignIn />
+          <div className="relative mt-6">
+            <div className="absolute inset-0 flex items-center" aria-hidden="true">
+              <div className="w-full border-t border-gray-200" />
+            </div>
+            <div className="relative flex justify-center text-sm font-medium leading-6">
+              <span className="bg-white px-6 text-gray-900">Or continue with email</span>
+            </div>
+          </div>
           <LoginForm />
         </div>
       </div>
