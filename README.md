@@ -34,6 +34,15 @@ behavior-monitor/
 
 ## Current Status
 
+### Recent Updates (January 17, 2025)
+- Fixed date handling in incident submission form
+  - Added proper date validation and error handling
+  - Improved user feedback for invalid dates
+  - Added default current date/time for better UX
+- Fixed authentication cookie handling in Supabase client
+  - Resolved issues with cookie promises in Next.js 13+
+  - Improved error handling for authentication state
+
 ### Completed Features
 - Basic project setup with Next.js and Supabase integration
 - Authentication system with protected routes
