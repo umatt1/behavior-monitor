@@ -3,14 +3,12 @@
 import { useState, useMemo } from 'react'
 import CalendarHeatmap from 'react-calendar-heatmap'
 import 'react-calendar-heatmap/dist/styles.css'
-import { startOfYear, endOfYear, startOfMonth, endOfMonth, startOfWeek, endOfWeek, subMonths, format } from 'date-fns'
+import { startOfYear, endOfYear, format, subYears } from 'date-fns'
 import { Incident } from '@/app/types'
 
 interface IncidentHeatmapProps {
   incidents: Incident[]
 }
-
-type TimeRange = 'week' | 'month' | 'year'
 
 interface HeatmapValue {
   date: Date
@@ -19,28 +17,12 @@ interface HeatmapValue {
 }
 
 export function IncidentHeatmap({ incidents }: IncidentHeatmapProps) {
-  const [timeRange, setTimeRange] = useState<TimeRange>('week')
   const [hoveredValue, setHoveredValue] = useState<HeatmapValue | null>(null)
 
   const { startDate, endDate, values } = useMemo(() => {
     const now = new Date()
-    let start: Date
-    let end: Date
-
-    switch (timeRange) {
-      case 'week':
-        start = startOfWeek(now)
-        end = endOfWeek(now)
-        break
-      case 'month':
-        start = startOfMonth(subMonths(now, 1))
-        end = endOfMonth(now)
-        break
-      case 'year':
-        start = startOfYear(now)
-        end = endOfYear(now)
-        break
-    }
+    const start = startOfYear(subYears(now, 1))
+    const end = endOfYear(now)
 
     // Create a map of dates to incident counts and average severity
     const dateMap = new Map<string, { count: number; totalSeverity: number }>()
@@ -66,7 +48,7 @@ export function IncidentHeatmap({ incidents }: IncidentHeatmapProps) {
       endDate: end,
       values: heatmapValues
     }
-  }, [incidents, timeRange])
+  }, [incidents])
 
   const getTooltipDataText = (value: HeatmapValue) => {
     if (!value || !value.count) return 'No incidents'
@@ -89,45 +71,21 @@ export function IncidentHeatmap({ incidents }: IncidentHeatmapProps) {
   return (
     <div className="bg-white rounded-lg shadow p-6">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-medium text-gray-900">Incident Frequency</h2>
-        <div className="flex space-x-2">
-          <button
-            onClick={() => setTimeRange('week')}
-            className={`px-3 py-1 rounded-md text-sm ${
-              timeRange === 'week'
-                ? 'bg-indigo-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            Week
-          </button>
-          <button
-            onClick={() => setTimeRange('month')}
-            className={`px-3 py-1 rounded-md text-sm ${
-              timeRange === 'month'
-                ? 'bg-indigo-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            Month
-          </button>
-          <button
-            onClick={() => setTimeRange('year')}
-            className={`px-3 py-1 rounded-md text-sm ${
-              timeRange === 'year'
-                ? 'bg-indigo-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            Year
-          </button>
-        </div>
+        <h2 className="text-lg font-medium text-gray-900">Incident Activity</h2>
       </div>
 
       <style jsx global>{`
+        .react-calendar-heatmap {
+          font-size: 8px;
+        }
         .react-calendar-heatmap text {
-          font-size: 10px;
+          font-size: 6px;
           fill: #aaa;
+        }
+        .react-calendar-heatmap rect {
+          height: 9px;
+          width: 9px;
+          rx: 2;
         }
         .react-calendar-heatmap .color-empty {
           fill: #f5f5f5;
@@ -157,6 +115,7 @@ export function IncidentHeatmap({ incidents }: IncidentHeatmapProps) {
             'data-tooltip': getTooltipDataText(value)
           })}
           showWeekdayLabels
+          gutterSize={2}
           onMouseOver={(event, value) => setHoveredValue(value)}
           onMouseLeave={() => setHoveredValue(null)}
         />
@@ -171,11 +130,11 @@ export function IncidentHeatmap({ incidents }: IncidentHeatmapProps) {
       <div className="flex justify-center items-center mt-4 text-sm text-gray-500">
         <span className="mr-2">Less</span>
         <div className="flex space-x-1">
-          <div className="w-4 h-4 bg-[#f5f5f5]" />
-          <div className="w-4 h-4 bg-[#ffedd5]" />
-          <div className="w-4 h-4 bg-[#fed7aa]" />
-          <div className="w-4 h-4 bg-[#fb923c]" />
-          <div className="w-4 h-4 bg-[#ea580c]" />
+          <div className="w-3 h-3 bg-[#f5f5f5]" />
+          <div className="w-3 h-3 bg-[#ffedd5]" />
+          <div className="w-3 h-3 bg-[#fed7aa]" />
+          <div className="w-3 h-3 bg-[#fb923c]" />
+          <div className="w-3 h-3 bg-[#ea580c]" />
         </div>
         <span className="ml-2">More</span>
       </div>
