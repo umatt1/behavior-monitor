@@ -1,36 +1,116 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Behavior Monitor
 
-## Getting Started
+A secure and private application for documenting and tracking behavioral patterns over time. This tool is designed to help individuals in challenging situations maintain a record of incidents and understand patterns.
 
-First, run the development server:
+## Tech Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Frontend**: Next.js 13+ with App Router
+- **Styling**: Tailwind CSS
+- **Authentication**: Supabase Auth
+- **Database**: Supabase (PostgreSQL)
+- **Language**: TypeScript
+
+## Project Structure
+
+```
+behavior-monitor/
+├── app/
+│   ├── (auth)/
+│   │   └── login/          # Authentication pages
+│   ├── (dashboard)/
+│   │   ├── dashboard/      # Main dashboard
+│   │   └── incidents/      # Incident management
+│   ├── components/
+│   │   ├── auth/          # Auth-related components
+│   │   ├── layout/        # Layout components
+│   │   └── providers/     # Context providers
+│   ├── utils/
+│   │   ├── supabase/     # Supabase client utilities
+│   │   └── dates.ts      # Date formatting utilities
+│   └── types/            # TypeScript type definitions
+├── supabase/
+│   └── schema.sql        # Database schema
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Current Status
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Completed Features
+- Basic project setup with Next.js and Supabase integration
+- Authentication system with protected routes
+- Database schema with Row Level Security
+- Basic UI components:
+  - Login page
+  - Dashboard with incident listing
+  - New incident form
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### In Progress
+- User registration flow
+- Email verification
+- Password reset functionality
+- Incident analysis and trend visualization
 
-## Learn More
+### Planned Features
+- Export functionality for incidents
+- Enhanced security features
+- Mobile-responsive design improvements
+- Incident categorization and tagging
+- Support for file attachments
+- Emergency contact information
 
-To learn more about Next.js, take a look at the following resources:
+## Development Setup
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Clone the repository
+2. Install dependencies:
+   ```bash
+   pnpm install
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+3. Set up environment variables in `.env.local`:
+   ```
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   ```
 
-## Deploy on Vercel
+4. Set up the database:
+   - Go to your Supabase project
+   - Open the SQL Editor
+   - Run the contents of `supabase/schema.sql`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+5. Run the development server:
+   ```bash
+   pnpm dev
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Known Issues and Considerations
+
+1. **Security**:
+   - Need to implement rate limiting for login attempts
+   - Should add 2FA support
+   - Consider adding encryption for sensitive incident details
+
+2. **Performance**:
+   - Dashboard queries need optimization for larger datasets
+   - Consider implementing pagination for incident listing
+
+3. **UX Improvements Needed**:
+   - Add better error messages
+   - Implement loading states
+   - Add confirmation dialogs for critical actions
+
+## Contributing
+
+This project is in active development. When contributing:
+1. Create feature branches from `main`
+2. Follow the existing code style
+3. Add appropriate tests
+4. Update documentation as needed
+
+## Testing
+
+Test user credentials for development:
+- Email: test@example.com
+- Password: password123
+
+## License
+
+[Add your chosen license]
