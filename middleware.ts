@@ -13,17 +13,37 @@ export async function middleware(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name: string) {
+        get: (name: string) => {
           return request.cookies.get(name)?.value
         },
-        set(name: string, value: string, options: CookieOptions) {
+        set: (name: string, value: string, options: CookieOptions) => {
+          request.cookies.set({
+            name,
+            value,
+            ...options,
+          })
+          response = NextResponse.next({
+            request: {
+              headers: request.headers,
+            },
+          })
           response.cookies.set({
             name,
             value,
             ...options,
           })
         },
-        remove(name: string, options: CookieOptions) {
+        remove: (name: string, options: CookieOptions) => {
+          request.cookies.set({
+            name,
+            value: '',
+            ...options,
+          })
+          response = NextResponse.next({
+            request: {
+              headers: request.headers,
+            },
+          })
           response.cookies.set({
             name,
             value: '',
@@ -34,11 +54,11 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  const { data: { session } } = await supabase.auth.getSession()
+  const { data: { user }, error } = await supabase.auth.getUser()
 
   // If user is not signed in and the current path is not /login,
   // redirect the user to /login
-  if (!session && !request.nextUrl.pathname.startsWith('/login')) {
+  if ((!user || error) && !request.nextUrl.pathname.startsWith('/login')) {
     const redirectUrl = new URL('/login', request.url)
     redirectUrl.searchParams.set('redirectedFrom', request.nextUrl.pathname)
     return NextResponse.redirect(redirectUrl)
@@ -46,7 +66,7 @@ export async function middleware(request: NextRequest) {
 
   // If user is signed in and the current path is /login,
   // redirect the user to /dashboard
-  if (session && request.nextUrl.pathname.startsWith('/login')) {
+  if (user && request.nextUrl.pathname.startsWith('/login')) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 

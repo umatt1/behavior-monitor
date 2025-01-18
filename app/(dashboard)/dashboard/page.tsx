@@ -1,11 +1,17 @@
 import { createClient } from '@/app/utils/supabase/server'
 import { formatDate } from '@/app/utils/dates'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
   
-  const { data: { session } } = await supabase.auth.getSession()
+  const { data: { user }, error: userError } = await supabase.auth.getUser()
+  
+  if (userError || !user) {
+    redirect('/login')
+  }
+
   const { data: incidents } = await supabase
     .from('incidents')
     .select('*')
