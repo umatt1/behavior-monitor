@@ -15,8 +15,30 @@ export default function NewIncidentPage() {
     setError(null)
 
     const formData = new FormData(e.currentTarget)
+    const rawDate = formData.get('date') as string
+    
+    if (!rawDate) {
+      setError('Date is required')
+      setLoading(false)
+      return
+    }
+
+    let date: string
+    try {
+      // Ensure the date is valid before converting to ISO string
+      const dateObj = new Date(rawDate)
+      if (isNaN(dateObj.getTime())) {
+        throw new Error('Invalid date format')
+      }
+      date = dateObj.toISOString()
+    } catch (err) {
+      setError('Please enter a valid date and time')
+      setLoading(false)
+      return
+    }
+    
     const data = {
-      date: formData.get('date') as string,
+      date,
       category: formData.get('category') as string,
       severity: parseInt(formData.get('severity') as string),
       description: formData.get('description') as string,
@@ -71,6 +93,8 @@ export default function NewIncidentPage() {
                 type="datetime-local"
                 name="date"
                 id="date"
+                required
+                defaultValue={new Date().toISOString().slice(0, 16)}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               />
             </div>
