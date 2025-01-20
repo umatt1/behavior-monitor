@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react'
 import CalendarHeatmap from 'react-calendar-heatmap'
 import 'react-calendar-heatmap/dist/styles.css'
-import { startOfMonth, endOfMonth, format, subMonths } from 'date-fns'
+import { startOfMonth, endOfMonth, format, subMonths, parseISO } from 'date-fns'
 import { Incident } from '@/app/types'
 
 interface IncidentHeatmapProps {
@@ -32,9 +32,14 @@ export function IncidentHeatmap({ incidents }: IncidentHeatmapProps) {
     const dateMap = new Map<string, { count: number; totalSeverity: number }>()
     
     incidents.forEach(incident => {
-      const date = new Date(incident.date).toISOString().split('T')[0]
-      const existing = dateMap.get(date) || { count: 0, totalSeverity: 0 }
-      dateMap.set(date, {
+      // Parse the ISO string and get the local date string
+      const date = parseISO(incident.date)
+      const localDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
+        .toISOString()
+        .split('T')[0]
+      
+      const existing = dateMap.get(localDate) || { count: 0, totalSeverity: 0 }
+      dateMap.set(localDate, {
         count: existing.count + 1,
         totalSeverity: existing.totalSeverity + incident.severity
       })
