@@ -95,11 +95,17 @@ export function IncidentList({ incidents: initialIncidents }: IncidentListProps)
                     </p>
                   )}
                 </div>
-                <div className="ml-4">
+                <div className="ml-4 flex space-x-2">
+                  <button
+                    onClick={() => router.push(`/incidents/${incident.id}/edit`)}
+                    className="inline-flex items-center rounded-md bg-indigo-50 px-2 py-1 text-sm font-medium text-indigo-700 hover:bg-indigo-100"
+                  >
+                    Edit
+                  </button>
                   <button
                     onClick={() => handleDelete(incident.id)}
                     disabled={loading === incident.id}
-                    className="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-sm font-medium text-red-700 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-sm font-medium text-red-700 hover:bg-red-100 disabled:opacity-50"
                   >
                     {loading === incident.id ? 'Deleting...' : 'Delete'}
                   </button>
