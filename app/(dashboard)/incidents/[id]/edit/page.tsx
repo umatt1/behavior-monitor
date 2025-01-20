@@ -4,6 +4,7 @@ import { createClient } from '@/app/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 import { FormEvent, useEffect, useState } from 'react'
 import { Incident } from '@/app/types'
+import { use } from 'react'
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -14,7 +15,7 @@ export default function EditIncidentPage({ params }: PageProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [incident, setIncident] = useState<Incident | null>(null)
-  const { id } = params as unknown as { id: string }  // Type assertion for backward compatibility
+  const resolvedParams = use(params)
 
   useEffect(() => {
     const fetchIncident = async () => {
@@ -23,7 +24,7 @@ export default function EditIncidentPage({ params }: PageProps) {
         const { data, error } = await supabase
           .from('incidents')
           .select('*')
-          .eq('id', id)
+          .eq('id', resolvedParams.id)
           .single()
 
         if (error) throw error
@@ -34,7 +35,7 @@ export default function EditIncidentPage({ params }: PageProps) {
     }
 
     fetchIncident()
-  }, [id])
+  }, [resolvedParams.id])
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -77,7 +78,7 @@ export default function EditIncidentPage({ params }: PageProps) {
       const { error: submitError } = await supabase
         .from('incidents')
         .update(data)
-        .eq('id', id)
+        .eq('id', resolvedParams.id)
 
       if (submitError) throw submitError
 
