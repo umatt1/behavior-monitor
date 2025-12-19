@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from './components/providers/Providers'
+import { PanicExit } from './components/layout/PanicExit'
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Behavior Monitor',
-  description: 'A safe space to document and track behavioral patterns',
+  title: 'Personal Journal',
+  description: 'A private space for reflection',
 };
 
 export default function RootLayout({
@@ -28,6 +29,7 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Providers>
           {children}
+          <PanicExit />
         </Providers>
       </body>
     </html>

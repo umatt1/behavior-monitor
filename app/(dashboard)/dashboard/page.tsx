@@ -3,6 +3,7 @@ import { DashboardHeader } from '@/app/components/dashboard/DashboardHeader'
 import { redirect } from 'next/navigation'
 import { IncidentList } from '@/app/components/incidents/IncidentList'
 import { IncidentHeatmap } from '@/app/components/dashboard/IncidentHeatmap'
+import { PatternSummary } from '@/app/components/dashboard/PatternSummary'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -13,14 +14,15 @@ export default async function DashboardPage() {
     redirect('/login')
   }
 
-  const { data: incidents } = await supabase
-    .from('incidents')
+  // Use behavior_logs table with neutral language
+  const { data: behaviorLogs } = await supabase
+    .from('behavior_logs')
     .select('*')
     .order('date', { ascending: false })
 
   const stats = {
-    totalIncidents: incidents?.length || 0,
-    recentIncidents: incidents || [],
+    totalLogs: behaviorLogs?.length || 0,
+    recentLogs: behaviorLogs || [],
   }
 
   return (
@@ -29,13 +31,15 @@ export default async function DashboardPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <DashboardHeader />
           
+          <PatternSummary logs={stats.recentLogs} />
+          
           <div className="mt-4">
-            <IncidentHeatmap incidents={stats.recentIncidents} />
+            <IncidentHeatmap incidents={stats.recentLogs} />
           </div>
 
           <div className="mt-8">
-            <h2 className="text-lg font-medium text-gray-900 mb-4">Your Incidents</h2>
-            <IncidentList incidents={stats.recentIncidents} />
+            <h2 className="text-lg font-medium text-gray-900 mb-4">Your Entries</h2>
+            <IncidentList incidents={stats.recentLogs} />
           </div>
         </div>
       </main>

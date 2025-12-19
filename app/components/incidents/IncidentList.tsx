@@ -16,7 +16,7 @@ export function IncidentList({ incidents: initialIncidents }: IncidentListProps)
   const router = useRouter()
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this incident?')) {
+    if (!confirm('Are you sure you want to delete this entry?')) {
       return
     }
 
@@ -26,7 +26,7 @@ export function IncidentList({ incidents: initialIncidents }: IncidentListProps)
     try {
       const supabase = createClient()
       const { error: deleteError } = await supabase
-        .from('incidents')
+        .from('behavior_logs')
         .delete()
         .eq('id', id)
 
@@ -36,7 +36,7 @@ export function IncidentList({ incidents: initialIncidents }: IncidentListProps)
       setIncidents(incidents.filter(incident => incident.id !== id))
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete incident')
+      setError(err instanceof Error ? err.message : 'Failed to delete entry')
     } finally {
       setLoading(null)
     }
@@ -55,7 +55,7 @@ export function IncidentList({ incidents: initialIncidents }: IncidentListProps)
   if (incidents.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500">No incidents recorded yet.</p>
+        <p className="text-gray-500">No entries recorded yet. Start by logging your first observation.</p>
       </div>
     )
   }
@@ -79,19 +79,20 @@ export function IncidentList({ incidents: initialIncidents }: IncidentListProps)
                   <p className="mt-2 text-sm text-gray-600">{incident.description}</p>
                   <div className="mt-2 flex">
                     <div className="flex items-center text-sm text-gray-500">
-                      <span>Severity: {incident.severity}</span>
+                      <span>Intensity: {(incident as any).intensity || incident.severity}</span>
                       <span className="mx-2">•</span>
                       <span>{formatDate(incident.date)}</span>
                     </div>
                   </div>
-                  {incident.location && (
+                  {((incident as any).context || incident.location) && (
                     <p className="mt-1 text-sm text-gray-500">
-                      Location: {incident.location}
+                      Context: {(incident as any).context || incident.location}
                     </p>
                   )}
-                  {incident.witnesses && (
+                  {(incident as any).emotion_before && (
                     <p className="mt-1 text-sm text-gray-500">
-                      Witnesses: {incident.witnesses}
+                      Before: {(incident as any).emotion_before}
+                      {(incident as any).emotion_after && ` → After: ${(incident as any).emotion_after}`}
                     </p>
                   )}
                 </div>

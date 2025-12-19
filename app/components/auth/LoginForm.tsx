@@ -9,10 +9,13 @@ export function LoginForm() {
   const searchParams = useSearchParams()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
+  const [mode, setMode] = useState<'password' | 'magic-link'>('magic-link') // Magic link is default
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handlePasswordSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setError(null)
+    setSuccess(null)
     setLoading(true)
 
     const formData = new FormData(e.currentTarget)
@@ -41,55 +44,154 @@ export function LoginForm() {
     }
   }
 
+  const handleMagicLinkSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setError(null)
+    setSuccess(null)
+    setLoading(true)
+
+    const formData = new FormData(e.currentTarget)
+    const email = formData.get('email') as string
+
+    try {
+      const supabase = createClient()
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
+      })
+
+      if (error) {
+        setError(error.message)
+        return
+      }
+
+      setSuccess('Check your email for a secure sign-in link')
+    } catch (err) {
+      setError('An unexpected error occurred' + err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
-    <form className="space-y-6" onSubmit={handleSubmit}>
+    <div className="space-y-6">
+      {/* Mode toggle */}
+      <div className="flex gap-2 p-1 bg-gray-100 rounded-lg">
+        <button
+          type="button"
+          onClick={() => setMode('magic-link')}
+          className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+            mode === 'magic-link'
+              ? 'bg-white text-gray-900 shadow'
+              : 'text-gray-600 hover:text-gray-900'
+          }`}
+        >
+          Email Link
+        </button>
+        <button
+          type="button"
+          onClick={() => setMode('password')}
+          className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+            mode === 'password'
+              ? 'bg-white text-gray-900 shadow'
+              : 'text-gray-600 hover:text-gray-900'
+          }`}
+        >
+          Password
+        </button>
+      </div>
+
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded text-sm">
           {error}
         </div>
       )}
-      
-      <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-          Email address
-        </label>
-        <div className="mt-1">
-          <input
-            id="email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            required
-            className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-          />
-        </div>
-      </div>
 
-      <div>
-        <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-          Password
-        </label>
-        <div className="mt-1">
-          <input
-            id="password"
-            name="password"
-            type="password"
-            autoComplete="current-password"
-            required
-            className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-          />
+      {success && (
+        <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded text-sm">
+          {success}
         </div>
-      </div>
+      )}
 
-      <div>
-        <button
-          type="submit"
-          disabled={loading}
-          className="flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {loading ? 'Signing in...' : 'Sign in'}
-        </button>
-      </div>
-    </form>
+      {mode === 'magic-link' ? (
+        <form className="space-y-6" onSubmit={handleMagicLinkSubmit}>
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              Email address
+            </label>
+            <div className="mt-1">
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                required
+                placeholder="you@example.com"
+                className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+              />
+            </div>
+            <p className="mt-2 text-xs text-gray-500">
+              A secure sign-in link will be sent to your email. No password needed.
+            </p>
+          </div>
+
+          <div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? 'Sending...' : 'Send Sign-In Link'}
+            </button>
+          </div>
+        </form>
+      ) : (
+        <form className="space-y-6" onSubmit={handlePasswordSubmit}>
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              Email address
+            </label>
+            <div className="mt-1">
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                required
+                className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              Password
+            </label>
+            <div className="mt-1">
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="current-password"
+                required
+                className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+              />
+            </div>
+          </div>
+
+          <div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? 'Signing in...' : 'Sign in'}
+            </button>
+          </div>
+        </form>
+      )}
+    </div>
   )
 }

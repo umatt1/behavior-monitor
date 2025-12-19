@@ -7,23 +7,34 @@ CREATE TABLE profiles (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Create incidents table
-CREATE TABLE incidents (
+-- Create behavior_logs table (renamed from incidents for neutral language)
+CREATE TABLE behavior_logs (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   user_id UUID REFERENCES auth.users NOT NULL,
   date TIMESTAMPTZ NOT NULL,
-  category TEXT NOT NULL CHECK (category IN ('Verbal', 'Physical', 'Emotional', 'Financial', 'Other')),
-  severity INTEGER NOT NULL CHECK (severity BETWEEN 1 AND 5),
+  category TEXT NOT NULL CHECK (category IN (
+    'Broken promises',
+    'Boundary violations', 
+    'Sudden affection after conflict',
+    'Gaslighting indicators',
+    'Intimidation or pressure',
+    'Emotional withdrawal',
+    'Inconsistent communication',
+    'Pattern interruption',
+    'Other'
+  )),
+  intensity INTEGER NOT NULL CHECK (intensity BETWEEN 1 AND 5),
   description TEXT NOT NULL,
-  location TEXT,
-  witnesses TEXT,
+  context TEXT,
+  emotion_before TEXT,
+  emotion_after TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- Enable Row Level Security
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
-ALTER TABLE incidents ENABLE ROW LEVEL SECURITY;
+ALTER TABLE behavior_logs ENABLE ROW LEVEL SECURITY;
 
 -- Create policies for profiles
 CREATE POLICY "Users can view own profile" 
@@ -34,21 +45,21 @@ CREATE POLICY "Users can update own profile"
   ON profiles FOR UPDATE 
   USING (auth.uid() = id);
 
--- Create policies for incidents
-CREATE POLICY "Users can view own incidents" 
-  ON incidents FOR SELECT 
+-- Create policies for behavior_logs
+CREATE POLICY "Users can view own behavior logs" 
+  ON behavior_logs FOR SELECT 
   USING (auth.uid() = user_id);
 
-CREATE POLICY "Users can create own incidents" 
-  ON incidents FOR INSERT 
+CREATE POLICY "Users can create own behavior logs" 
+  ON behavior_logs FOR INSERT 
   WITH CHECK (auth.uid() = user_id);
 
-CREATE POLICY "Users can update own incidents" 
-  ON incidents FOR UPDATE 
+CREATE POLICY "Users can update own behavior logs" 
+  ON behavior_logs FOR UPDATE 
   USING (auth.uid() = user_id);
 
-CREATE POLICY "Users can delete own incidents" 
-  ON incidents FOR DELETE 
+CREATE POLICY "Users can delete own behavior logs" 
+  ON behavior_logs FOR DELETE 
   USING (auth.uid() = user_id);
 
 -- Create function to handle user creation

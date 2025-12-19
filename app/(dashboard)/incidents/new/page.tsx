@@ -40,10 +40,11 @@ export default function NewIncidentPage() {
     const data = {
       date,
       category: formData.get('category') as string,
-      severity: parseInt(formData.get('severity') as string),
+      intensity: parseInt(formData.get('intensity') as string),
       description: formData.get('description') as string,
-      location: formData.get('location') as string,
-      witnesses: formData.get('witnesses') as string,
+      context: formData.get('context') as string,
+      emotion_before: formData.get('emotion_before') as string,
+      emotion_after: formData.get('emotion_after') as string,
     }
 
     try {
@@ -55,7 +56,7 @@ export default function NewIncidentPage() {
       }
 
       const { error: submitError } = await supabase
-        .from('incidents')
+        .from('behavior_logs')
         .insert([{
           ...data,
           user_id: user.id,
@@ -76,7 +77,10 @@ export default function NewIncidentPage() {
     <div className="min-h-screen bg-gray-100 py-10">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white shadow rounded-lg p-6">
-          <h1 className="text-2xl font-semibold text-gray-900 mb-6">Document New Incident</h1>
+          <h1 className="text-2xl font-semibold text-gray-900 mb-2">Log Behavior</h1>
+          <p className="text-sm text-gray-600 mb-6">
+            Record an observation for your personal reflection. This is private and for your clarity only.
+          </p>
           
           <form className="space-y-6" onSubmit={handleSubmit}>
             {error && (
@@ -101,39 +105,23 @@ export default function NewIncidentPage() {
 
             <div>
               <label htmlFor="category" className="block text-sm font-medium text-gray-900">
-                Category
+                What happened?
               </label>
               <select
                 id="category"
                 name="category"
                 className="mt-1 block w-full rounded-md border-gray-300 text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               >
-                <option>Verbal</option>
-                <option>Physical</option>
-                <option>Emotional</option>
-                <option>Financial</option>
+                <option>Broken promises</option>
+                <option>Boundary violations</option>
+                <option>Sudden affection after conflict</option>
+                <option>Gaslighting indicators</option>
+                <option>Intimidation or pressure</option>
+                <option>Emotional withdrawal</option>
+                <option>Inconsistent communication</option>
+                <option>Pattern interruption</option>
                 <option>Other</option>
               </select>
-            </div>
-
-            <div>
-              <label htmlFor="severity" className="block text-sm font-medium text-gray-900">
-                Severity Level
-              </label>
-              <input
-                type="range"
-                min="1"
-                max="5"
-                defaultValue="1"
-                className="mt-1 block w-full accent-indigo-600"
-                id="severity"
-                name="severity"
-              />
-              <div className="flex justify-between text-xs text-gray-600 mt-1">
-                <span>Minor (1)</span>
-                <span>Moderate (3)</span>
-                <span>Severe (5)</span>
-              </div>
             </div>
 
             <div>
@@ -151,28 +139,61 @@ export default function NewIncidentPage() {
             </div>
 
             <div>
-              <label htmlFor="location" className="block text-sm font-medium text-gray-900">
-                Location
+              <label htmlFor="intensity" className="block text-sm font-medium text-gray-900">
+                How intense was this experience?
+              </label>
+              <input
+                type="range"
+                min="1"
+                max="5"
+                defaultValue="1"
+                className="mt-1 block w-full accent-indigo-600"
+                id="intensity"
+                name="intensity"
+              />
+              <div className="flex justify-between text-xs text-gray-600 mt-1">
+                <span>Mild (1)</span>
+                <span>Moderate (3)</span>
+                <span>Intense (5)</span>
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="emotion_before" className="block text-sm font-medium text-gray-900">
+                How did you feel before this?
               </label>
               <input
                 type="text"
-                name="location"
-                id="location"
+                name="emotion_before"
+                id="emotion_before"
                 className="mt-1 block w-full rounded-md border-gray-300 text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                placeholder="Where did this occur?"
+                placeholder="e.g., calm, anxious, hopeful..."
               />
             </div>
 
             <div>
-              <label htmlFor="witnesses" className="block text-sm font-medium text-gray-900">
-                Witnesses
+              <label htmlFor="emotion_after" className="block text-sm font-medium text-gray-900">
+                How did you feel after?
               </label>
               <input
                 type="text"
-                name="witnesses"
-                id="witnesses"
+                name="emotion_after"
+                id="emotion_after"
                 className="mt-1 block w-full rounded-md border-gray-300 text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                placeholder="Were there any witnesses? (Optional)"
+                placeholder="e.g., confused, relieved, upset..."
+              />
+            </div>
+
+            <div>
+              <label htmlFor="context" className="block text-sm font-medium text-gray-900">
+                Context (optional)
+              </label>
+              <input
+                type="text"
+                name="context"
+                id="context"
+                className="mt-1 block w-full rounded-md border-gray-300 text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                placeholder="Where or when did this happen?"
               />
             </div>
 
@@ -189,7 +210,7 @@ export default function NewIncidentPage() {
                 disabled={loading}
                 className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? 'Saving...' : 'Save Incident'}
+                {loading ? 'Saving...' : 'Save Entry'}
               </button>
             </div>
           </form>

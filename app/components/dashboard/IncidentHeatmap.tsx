@@ -28,7 +28,7 @@ export function IncidentHeatmap({ incidents }: IncidentHeatmapProps) {
     const start = startOfMonth(subMonths(now, 5)) // Show last 6 months
     const end = endOfMonth(now)
 
-    // Create a map of dates to incident counts and average severity
+    // Create a map of dates to log counts and average intensity
     const dateMap = new Map<string, { count: number; totalSeverity: number }>()
     
     incidents.forEach(incident => {
@@ -39,9 +39,11 @@ export function IncidentHeatmap({ incidents }: IncidentHeatmapProps) {
         .split('T')[0]
       
       const existing = dateMap.get(localDate) || { count: 0, totalSeverity: 0 }
+      // Use 'intensity' field if available, fallback to 'severity' for backward compatibility
+      const intensityValue = (incident as any).intensity || (incident as any).severity || 1
       dateMap.set(localDate, {
         count: existing.count + 1,
-        totalSeverity: existing.totalSeverity + incident.severity
+        totalSeverity: existing.totalSeverity + intensityValue
       })
     })
 
@@ -62,8 +64,8 @@ export function IncidentHeatmap({ incidents }: IncidentHeatmapProps) {
   }, [incidents])
 
   const getTooltipDataText = (value: ReactCalendarHeatmapValue | undefined) => {
-    if (!value?.value) return 'No incidents'
-    return `${value.value.count} incident${value.value.count !== 1 ? 's' : ''} (avg severity: ${value.value.severity.toFixed(1)})`
+    if (!value?.value) return 'No entries'
+    return `${value.value.count} entr${value.value.count !== 1 ? 'ies' : 'y'} (avg intensity: ${value.value.severity.toFixed(1)})`
   }
 
   const getTitleForValue = (value: ReactCalendarHeatmapValue | undefined) => {
@@ -82,7 +84,10 @@ export function IncidentHeatmap({ incidents }: IncidentHeatmapProps) {
   return (
     <div className="bg-white rounded-lg shadow p-6">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-medium text-gray-900">Incident Activity</h2>
+        <h2 className="text-lg font-medium text-gray-900">Activity Over Time</h2>
+        <p className="text-sm text-gray-600">
+          Visualize patterns and clustering in your entries
+        </p>
       </div>
 
       <style jsx global>{`

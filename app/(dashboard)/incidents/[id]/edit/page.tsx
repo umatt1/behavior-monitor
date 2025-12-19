@@ -22,7 +22,7 @@ export default function EditIncidentPage({ params }: PageProps) {
       try {
         const supabase = createClient()
         const { data, error } = await supabase
-          .from('incidents')
+          .from('behavior_logs')
           .select('*')
           .eq('id', resolvedParams.id)
           .single()
@@ -30,7 +30,7 @@ export default function EditIncidentPage({ params }: PageProps) {
         if (error) throw error
         setIncident(data)
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load incident')
+        setError(err instanceof Error ? err.message : 'Failed to load entry')
       }
     }
 
@@ -67,16 +67,17 @@ export default function EditIncidentPage({ params }: PageProps) {
     const data = {
       date,
       category: formData.get('category') as string,
-      severity: parseInt(formData.get('severity') as string),
+      intensity: parseInt(formData.get('intensity') as string),
       description: formData.get('description') as string,
-      location: formData.get('location') as string,
-      witnesses: formData.get('witnesses') as string,
+      context: formData.get('context') as string,
+      emotion_before: formData.get('emotion_before') as string,
+      emotion_after: formData.get('emotion_after') as string,
     }
 
     try {
       const supabase = createClient()
       const { error: submitError } = await supabase
-        .from('incidents')
+        .from('behavior_logs')
         .update(data)
         .eq('id', resolvedParams.id)
 
@@ -99,7 +100,7 @@ export default function EditIncidentPage({ params }: PageProps) {
             {error ? (
               <div className="text-red-600">{error}</div>
             ) : (
-              <div>Loading incident...</div>
+              <div>Loading entry...</div>
             )}
           </div>
         </div>
@@ -111,7 +112,10 @@ export default function EditIncidentPage({ params }: PageProps) {
     <div className="min-h-screen bg-gray-100 py-10">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white shadow rounded-lg p-6">
-          <h1 className="text-2xl font-semibold text-gray-900 mb-6">Edit Incident</h1>
+          <h1 className="text-2xl font-semibold text-gray-900 mb-2">Edit Entry</h1>
+          <p className="text-sm text-gray-600 mb-6">
+            Update your observation with any additional details.
+          </p>
           
           <form className="space-y-6" onSubmit={handleSubmit}>
             {error && (
@@ -136,7 +140,7 @@ export default function EditIncidentPage({ params }: PageProps) {
 
             <div>
               <label htmlFor="category" className="block text-sm font-medium text-gray-900">
-                Category
+                What happened?
               </label>
               <select
                 id="category"
@@ -144,32 +148,64 @@ export default function EditIncidentPage({ params }: PageProps) {
                 defaultValue={incident.category}
                 className="mt-1 block w-full rounded-md border-gray-300 text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               >
-                <option>Verbal</option>
-                <option>Physical</option>
-                <option>Emotional</option>
-                <option>Financial</option>
+                <option>Broken promises</option>
+                <option>Boundary violations</option>
+                <option>Sudden affection after conflict</option>
+                <option>Gaslighting indicators</option>
+                <option>Intimidation or pressure</option>
+                <option>Emotional withdrawal</option>
+                <option>Inconsistent communication</option>
+                <option>Pattern interruption</option>
                 <option>Other</option>
               </select>
             </div>
 
             <div>
-              <label htmlFor="severity" className="block text-sm font-medium text-gray-900">
-                Severity Level
+              <label htmlFor="intensity" className="block text-sm font-medium text-gray-900">
+                How intense was this experience?
               </label>
               <input
                 type="range"
                 min="1"
                 max="5"
-                defaultValue={incident.severity}
+                defaultValue={(incident as any).intensity || (incident as any).severity || 1}
                 className="mt-1 block w-full accent-indigo-600"
-                id="severity"
-                name="severity"
+                id="intensity"
+                name="intensity"
               />
               <div className="flex justify-between text-xs text-gray-600 mt-1">
-                <span>Minor (1)</span>
+                <span>Mild (1)</span>
                 <span>Moderate (3)</span>
-                <span>Severe (5)</span>
+                <span>Intense (5)</span>
               </div>
+            </div>
+
+            <div>
+              <label htmlFor="emotion_before" className="block text-sm font-medium text-gray-900">
+                How did you feel before this?
+              </label>
+              <input
+                type="text"
+                name="emotion_before"
+                id="emotion_before"
+                defaultValue={(incident as any).emotion_before}
+                className="mt-1 block w-full rounded-md border-gray-300 text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                placeholder="e.g., calm, anxious, hopeful..."
+              />
+            </div>
+
+            <div>
+              <label htmlFor="emotion_after" className="block text-sm font-medium text-gray-900">
+                How did you feel after?
+              </label>
+              <input
+                type="text"
+                name="emotion_after"
+                id="emotion_after"
+                defaultValue={(incident as any).emotion_after}
+                className="mt-1 block w-full rounded-md border-gray-300 text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                placeholder="e.g., confused, relieved, upset..."
+              />
             </div>
 
             <div>
@@ -188,30 +224,16 @@ export default function EditIncidentPage({ params }: PageProps) {
             </div>
 
             <div>
-              <label htmlFor="location" className="block text-sm font-medium text-gray-900">
-                Location
+              <label htmlFor="context" className="block text-sm font-medium text-gray-900">
+                Context (optional)
               </label>
               <input
                 type="text"
-                name="location"
-                id="location"
-                defaultValue={incident.location}
+                name="context"
+                id="context"
+                defaultValue={(incident as any).context || (incident as any).location || ''}
                 className="mt-1 block w-full rounded-md border-gray-300 text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                placeholder="Where did this occur?"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="witnesses" className="block text-sm font-medium text-gray-900">
-                Witnesses
-              </label>
-              <input
-                type="text"
-                name="witnesses"
-                id="witnesses"
-                defaultValue={incident.witnesses}
-                className="mt-1 block w-full rounded-md border-gray-300 text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                placeholder="Were there any witnesses? (Optional)"
+                placeholder="Where or when did this happen?"
               />
             </div>
 
