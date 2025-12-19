@@ -24,11 +24,14 @@ export function PanicExit() {
   return (
     <button
       onClick={handlePanicExit}
-      className="fixed bottom-4 right-4 bg-gray-200 hover:bg-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded shadow-sm transition-colors"
+      className="fixed bottom-4 right-4 z-50 bg-gray-300 hover:bg-gray-400 text-gray-700 text-xs px-3 py-2 rounded-md shadow-md hover:shadow-lg transition-all border border-gray-400"
       title="Quick exit (Ctrl+Shift+E)"
       aria-label="Quick exit to weather.com"
     >
-      ⌨
+      <span className="flex items-center gap-1.5">
+        <span>⌨</span>
+        <span className="text-[10px] opacity-75">ESC</span>
+      </span>
     </button>
   )
 }
