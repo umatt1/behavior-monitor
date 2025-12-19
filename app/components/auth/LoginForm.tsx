@@ -156,10 +156,17 @@ export function LoginForm() {
             <h3 className="text-sm font-medium text-blue-900 mb-2">Start Without Email</h3>
             <p className="text-sm text-blue-800 mb-3">
               Begin using the app immediately without providing any personal information. 
-              Your data stays on this device.
+              Your data stays on this device only.
             </p>
+            <div className="bg-amber-50 border border-amber-300 rounded p-3 mb-3">
+              <p className="text-sm text-amber-900 font-medium mb-1">⚠️ Important:</p>
+              <p className="text-sm text-amber-800">
+                Anonymous sessions cannot be recovered. If you clear your browser data or use a different device, 
+                you&apos;ll lose access to your entries. Add an email from Settings to preserve your data.
+              </p>
+            </div>
             <p className="text-sm text-blue-700">
-              <strong>Note:</strong> You can add an email later to access your data from other devices.
+              <strong>Recommended:</strong> Start anonymously now, add email later from Settings when ready.
             </p>
           </div>
 

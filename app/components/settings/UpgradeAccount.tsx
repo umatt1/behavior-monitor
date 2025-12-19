@@ -48,18 +48,27 @@ export function UpgradeAccount() {
   }
 
   return (
-    <div className="bg-white shadow sm:rounded-lg">
+    <div className="bg-white shadow sm:rounded-lg border-2 border-amber-200">
       <div className="px-4 py-5 sm:p-6">
-        <h3 className="text-lg font-medium leading-6 text-gray-900">
-          Add Email to Your Account
-        </h3>
+        <div className="flex items-start gap-3 mb-4">
+          <span className="text-2xl">⚠️</span>
+          <div>
+            <h3 className="text-lg font-medium leading-6 text-gray-900">
+              Protect Your Data - Add Email
+            </h3>
+            <p className="mt-1 text-sm text-amber-800 font-medium">
+              Your anonymous session will be lost if you clear cookies or use another device
+            </p>
+          </div>
+        </div>
         <div className="mt-2 max-w-xl text-sm text-gray-500">
           <p>
             You&apos;re currently using an anonymous account. Add an email and password to:
           </p>
           <ul className="mt-2 list-disc pl-5 space-y-1">
+            <li><strong>Prevent data loss</strong> if cookies are cleared</li>
             <li>Access your data from other devices</li>
-            <li>Recover your account if you clear browser data</li>
+            <li>Sign back in if your session expires</li>
             <li>Use the magic link feature</li>
           </ul>
         </div>
