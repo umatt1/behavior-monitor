@@ -79,20 +79,20 @@ export function IncidentList({ incidents: initialIncidents }: IncidentListProps)
                   <p className="mt-2 text-sm text-gray-600">{incident.description}</p>
                   <div className="mt-2 flex">
                     <div className="flex items-center text-sm text-gray-500">
-                      <span>Intensity: {(incident as any).intensity || incident.severity}</span>
+                      <span>Intensity: {incident.intensity || 1}</span>
                       <span className="mx-2">•</span>
                       <span>{formatDate(incident.date)}</span>
                     </div>
                   </div>
-                  {((incident as any).context || incident.location) && (
+                  {incident.context && (
                     <p className="mt-1 text-sm text-gray-500">
-                      Context: {(incident as any).context || incident.location}
+                      Context: {incident.context}
                     </p>
                   )}
-                  {(incident as any).emotion_before && (
+                  {incident.emotion_before && (
                     <p className="mt-1 text-sm text-gray-500">
-                      Before: {(incident as any).emotion_before}
-                      {(incident as any).emotion_after && ` → After: ${(incident as any).emotion_after}`}
+                      Before: {incident.emotion_before}
+                      {incident.emotion_after && ` → After: ${incident.emotion_after}`}
                     </p>
                   )}
                 </div>

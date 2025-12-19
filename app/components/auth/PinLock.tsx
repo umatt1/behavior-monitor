@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, FormEvent } from 'react'
+import { useState, FormEvent } from 'react'
 import { createClient } from '@/app/utils/supabase/client'
 
 interface PinLockProps {
@@ -52,7 +52,7 @@ export function PinLock({ onUnlock }: PinLockProps) {
         setError('Incorrect PIN')
         setPin('')
       }
-    } catch (err) {
+    } catch {
       setError('An error occurred')
     } finally {
       setLoading(false)

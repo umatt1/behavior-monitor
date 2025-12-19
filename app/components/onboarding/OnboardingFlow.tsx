@@ -54,7 +54,7 @@ export function OnboardingFlow() {
               Understanding Memory in Stressful Situations
             </h2>
             <p className="text-gray-600">
-              When we're in confusing or emotionally intense situations, our memory can become less reliable. 
+              When we&apos;re in confusing or emotionally intense situations, our memory can become less reliable. 
               We might question what really happened or doubt our own experiences.
             </p>
             <p className="text-gray-600">
@@ -76,7 +76,7 @@ export function OnboardingFlow() {
               Privacy & Safety First
             </h2>
             <p className="text-gray-600">
-              We've designed this tool with your safety in mind:
+              We&apos;ve designed this tool with your safety in mind:
             </p>
             <ul className="list-disc pl-5 space-y-2 text-gray-600">
               <li>All data is private and visible only to you</li>
@@ -87,7 +87,7 @@ export function OnboardingFlow() {
             </ul>
             <div className="bg-amber-50 border border-amber-200 rounded p-4">
               <p className="text-sm text-amber-800">
-                <strong>Note:</strong> If you're concerned about device access, consider using 
+                <strong>Note:</strong> If you&apos;re concerned about device access, consider using 
                 private browsing mode or clearing your history after each session.
               </p>
             </div>
@@ -120,7 +120,7 @@ export function OnboardingFlow() {
               </ul>
             </div>
             <p className="text-gray-600 font-medium">
-              You're in control. Use this tool in whatever way helps you gain clarity.
+              You&apos;re in control. Use this tool in whatever way helps you gain clarity.
             </p>
           </div>
         )}

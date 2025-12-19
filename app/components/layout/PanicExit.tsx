@@ -1,11 +1,8 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 
 export function PanicExit() {
-  const router = useRouter()
-
   const handlePanicExit = () => {
     // Clear recent history and redirect to a neutral site
     window.location.replace('https://www.weather.com')

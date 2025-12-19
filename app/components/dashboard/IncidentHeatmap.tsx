@@ -40,7 +40,7 @@ export function IncidentHeatmap({ incidents }: IncidentHeatmapProps) {
       
       const existing = dateMap.get(localDate) || { count: 0, totalSeverity: 0 }
       // Use 'intensity' field if available, fallback to 'severity' for backward compatibility
-      const intensityValue = (incident as any).intensity || (incident as any).severity || 1
+      const intensityValue = (incident as { intensity?: number; severity?: number }).intensity || (incident as { intensity?: number; severity?: number }).severity || 1
       dateMap.set(localDate, {
         count: existing.count + 1,
         totalSeverity: existing.totalSeverity + intensityValue

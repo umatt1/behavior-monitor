@@ -1,7 +1,7 @@
 'use client'
 
 import { BehaviorLog } from '@/app/types'
-import { format, subDays, startOfWeek, endOfWeek, isWithinInterval } from 'date-fns'
+import { subDays, startOfWeek, endOfWeek, isWithinInterval } from 'date-fns'
 
 interface PatternSummaryProps {
   logs: BehaviorLog[]
@@ -94,7 +94,7 @@ export function PatternSummary({ logs }: PatternSummaryProps) {
           <div className="border-l-4 border-amber-500 pl-4">
             <h3 className="text-sm font-medium text-gray-700 mb-2">Recent Activity</h3>
             <p className="text-sm text-gray-900">
-              You've logged {recentLogs.length} entries in the past week
+              You&apos;ve logged {recentLogs.length} entries in the past week
             </p>
             <p className="text-sm text-gray-500">
               This shows increased frequency recently

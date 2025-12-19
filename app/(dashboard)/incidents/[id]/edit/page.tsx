@@ -168,7 +168,7 @@ export default function EditIncidentPage({ params }: PageProps) {
                 type="range"
                 min="1"
                 max="5"
-                defaultValue={(incident as any).intensity || (incident as any).severity || 1}
+                defaultValue={(incident as { intensity?: number; severity?: number }).intensity || (incident as { intensity?: number; severity?: number }).severity || 1}
                 className="mt-1 block w-full accent-indigo-600"
                 id="intensity"
                 name="intensity"
@@ -188,7 +188,7 @@ export default function EditIncidentPage({ params }: PageProps) {
                 type="text"
                 name="emotion_before"
                 id="emotion_before"
-                defaultValue={(incident as any).emotion_before}
+                defaultValue={(incident as { emotion_before?: string }).emotion_before}
                 className="mt-1 block w-full rounded-md border-gray-300 text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 placeholder="e.g., calm, anxious, hopeful..."
               />
@@ -202,7 +202,7 @@ export default function EditIncidentPage({ params }: PageProps) {
                 type="text"
                 name="emotion_after"
                 id="emotion_after"
-                defaultValue={(incident as any).emotion_after}
+                defaultValue={(incident as { emotion_after?: string }).emotion_after}
                 className="mt-1 block w-full rounded-md border-gray-300 text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 placeholder="e.g., confused, relieved, upset..."
               />
@@ -231,7 +231,7 @@ export default function EditIncidentPage({ params }: PageProps) {
                 type="text"
                 name="context"
                 id="context"
-                defaultValue={(incident as any).context || (incident as any).location || ''}
+                defaultValue={(incident as { context?: string; location?: string }).context || (incident as { context?: string; location?: string }).location || ''}
                 className="mt-1 block w-full rounded-md border-gray-300 text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 placeholder="Where or when did this happen?"
               />
