@@ -9,10 +9,11 @@
 -- Create profiles table
 CREATE TABLE IF NOT EXISTS profiles (
   id UUID REFERENCES auth.users PRIMARY KEY,
-  email TEXT NOT NULL,
+  email TEXT, -- Allow NULL for anonymous users
   full_name TEXT,
   pin_hash TEXT,
   pin_enabled BOOLEAN DEFAULT FALSE,
+  is_anonymous BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -59,6 +60,7 @@ ALTER TABLE user_preferences ENABLE ROW LEVEL SECURITY;
 
 -- Drop existing policies if they exist (to avoid errors)
 DROP POLICY IF EXISTS "Users can view own profile" ON profiles;
+DROP POLICY IF EXISTS "Users can insert own profile" ON profiles;
 DROP POLICY IF EXISTS "Users can update own profile" ON profiles;
 DROP POLICY IF EXISTS "Users can view own behavior logs" ON behavior_logs;
 DROP POLICY IF EXISTS "Users can create own behavior logs" ON behavior_logs;
@@ -72,6 +74,10 @@ DROP POLICY IF EXISTS "Users can update own preferences" ON user_preferences;
 CREATE POLICY "Users can view own profile" 
   ON profiles FOR SELECT 
   USING (auth.uid() = id);
+
+CREATE POLICY "Users can insert own profile" 
+  ON profiles FOR INSERT 
+  WITH CHECK (auth.uid() = id);
 
 CREATE POLICY "Users can update own profile" 
   ON profiles FOR UPDATE 
@@ -111,8 +117,8 @@ CREATE POLICY "Users can update own preferences"
 CREATE OR REPLACE FUNCTION public.handle_new_user() 
 RETURNS trigger AS $$
 BEGIN
-  INSERT INTO public.profiles (id, email)
-  VALUES (new.id, new.email)
+  INSERT INTO public.profiles (id, email, is_anonymous)
+  VALUES (new.id, new.email, new.is_anonymous)
   ON CONFLICT (id) DO NOTHING;
   RETURN new;
 END;
