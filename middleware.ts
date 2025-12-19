@@ -56,6 +56,11 @@ export async function middleware(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser()
 
+  // Allow auth callback to complete without authentication check
+  if (request.nextUrl.pathname.startsWith('/auth/callback')) {
+    return response
+  }
+
   // If user is not signed in and the current path is not /login,
   // redirect the user to /login
   if (!user && !request.nextUrl.pathname.startsWith('/login')) {
