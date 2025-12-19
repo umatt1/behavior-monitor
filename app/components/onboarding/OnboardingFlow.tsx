@@ -45,6 +45,12 @@ export function OnboardingFlow() {
             <p className="text-gray-600">
               Think of it as a journal that helps you see the bigger picture over time.
             </p>
+            <div className="bg-blue-50 border border-blue-200 rounded p-4 mt-4">
+              <p className="text-sm text-blue-800">
+                <strong>Privacy Note:</strong> You can use this tool completely anonymously without providing any personal information. 
+                You can add an email later if you want to access your data from other devices.
+              </p>
+            </div>
           </div>
         )}
 

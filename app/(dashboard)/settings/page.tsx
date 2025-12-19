@@ -1,6 +1,7 @@
 import { createClient } from '@/app/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { DataDeletionForm } from '@/app/components/settings/DataDeletionForm'
+import { UpgradeAccount } from '@/app/components/settings/UpgradeAccount'
 
 export default async function SettingsPage() {
   const supabase = await createClient()
@@ -11,11 +12,29 @@ export default async function SettingsPage() {
     redirect('/login')
   }
 
+  // Check if user is anonymous (no email)
+  const isAnonymous = user.is_anonymous || !user.email
+
   return (
     <div className="min-h-screen bg-gray-100">
       <main className="py-10">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-3xl font-semibold text-gray-900 mb-8">Settings</h1>
+          
+          {isAnonymous && (
+            <div className="mb-6">
+              <UpgradeAccount />
+            </div>
+          )}
+
+          {!isAnonymous && (
+            <div className="bg-white shadow rounded-lg p-6 mb-6">
+              <h2 className="text-xl font-medium text-gray-900 mb-4">Account</h2>
+              <p className="text-sm text-gray-600">
+                Signed in as: <span className="font-medium text-gray-900">{user.email}</span>
+              </p>
+            </div>
+          )}
           
           <div className="bg-white shadow rounded-lg p-6 mb-6">
             <h2 className="text-xl font-medium text-gray-900 mb-4">Privacy & Data</h2>

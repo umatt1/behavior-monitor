@@ -10,7 +10,7 @@ export function LoginForm() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
-  const [mode, setMode] = useState<'password' | 'magic-link'>('magic-link') // Magic link is default
+  const [mode, setMode] = useState<'password' | 'magic-link' | 'anonymous'>('anonymous') // Anonymous is default
 
   const handlePasswordSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -75,10 +75,45 @@ export function LoginForm() {
     }
   }
 
+  const handleAnonymousSignIn = async () => {
+    setError(null)
+    setSuccess(null)
+    setLoading(true)
+
+    try {
+      const supabase = createClient()
+      const { error } = await supabase.auth.signInAnonymously()
+
+      if (error) {
+        setError(error.message)
+        return
+      }
+
+      const redirectTo = searchParams.get('redirectedFrom') || '/dashboard'
+      router.push(redirectTo)
+      router.refresh()
+    } catch (err) {
+      setError('An unexpected error occurred' + err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div className="space-y-6">
       {/* Mode toggle */}
       <div className="flex gap-2 p-1 bg-gray-100 rounded-lg">
+        <button
+          type="button"
+          onClick={() => setMode('anonymous')}
+          className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+            mode === 'anonymous'
+              ? 'bg-white text-gray-900 shadow'
+              : 'text-gray-600 hover:text-gray-900'
+          }`}
+        >
+          Start Now
+        </button>
         <button
           type="button"
           onClick={() => setMode('magic-link')}
@@ -115,7 +150,31 @@ export function LoginForm() {
         </div>
       )}
 
-      {mode === 'magic-link' ? (
+      {mode === 'anonymous' ? (
+        <div className="space-y-6">
+          <div className="bg-blue-50 border border-blue-200 rounded p-4">
+            <h3 className="text-sm font-medium text-blue-900 mb-2">Start Without Email</h3>
+            <p className="text-sm text-blue-800 mb-3">
+              Begin using the app immediately without providing any personal information. 
+              Your data stays on this device.
+            </p>
+            <p className="text-sm text-blue-700">
+              <strong>Note:</strong> You can add an email later to access your data from other devices.
+            </p>
+          </div>
+
+          <div>
+            <button
+              type="button"
+              onClick={handleAnonymousSignIn}
+              disabled={loading}
+              className="flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? 'Starting...' : 'Start Anonymously'}
+            </button>
+          </div>
+        </div>
+      ) : mode === 'magic-link' ? (
         <form className="space-y-6" onSubmit={handleMagicLinkSubmit}>
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">
